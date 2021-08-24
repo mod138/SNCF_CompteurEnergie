@@ -1,0 +1,66 @@
+code_sachet,code_element,description,qty,Caisse 1,Caisse 2,Caisse 3,Caisse 4,Caisse 5,Caisse 6
+INTP000110-2,INTP000110,Patte de fixation 1 (04-3 740 000),2,2,,,,,
+INTP000111-1,INTP000111,Patte de fixation 2 (04-3 740 001),1,1,,,,,
+INTP000120-1,INTP000120,Gousset 1 (04-3 740 216),1,1,,,,,
+INTP000108-1,INTP000108,Gousset 2 (04-3 740 212),1,1,,,,,
+,,Support principal (?????),1,1,,,,,
+INTC000053-7,INTC000053,Tresses de masse (04-3 740 217-101),7,6,,1,,,
+INTC000053-102-1,INTC000053-102,Tresse de masse (04-3 740 217-102),1,1,,,,,
+INTC000044-102-1,INTC000044-102,Connexion de masse EMFAC (04-3 740 192/102),1,1,,,,,
+INTP000107-1,INTP000107,Support platine (04-3 740 004),1,1,,,,,
+,,Valisette 1 - MSAV25K support (établi),1,1,,,,,
+,,Valisette 2 - MSAV25K support,1,1,,,,,
+,,Valisette 3 - MSAV25K capteur et connexions (établi),1,,1,,,,
+,,Valisette 4 - MSAV25K capteur et connexions,1,,1,,,,
+INTP000103-1,INTP000103,Connexion pantographe (04-3 740 005),1,,1,,,,
+,,Barre de connexion IN MSAV25K (04-3 740 007),1,,1,,,,
+INTP000102-1,INTP000102,Connexion MSAV25K (04-3 740 006),1,,1,,,,
+INTP000024-1,INTP000024,Bride (05-3 524 651),1,,1,,,,
+,,Manchon (10-5 180 415),1,,1,,,,
+INTP00015-160-1,INTP00015-160,Tresse 300mm² (10-5 222 667/160),1,,1,,,,
+INTP000105-1,INTP000105,Connexion OUT MSAV25K (04-3 740 002),1,,1,,,,
+INTC000044-101-1,INTC000044-101,Connexion de masse EMFAC (04-3 740 192/101),1,,1,,,,
+,,Valisette MSAVDC,1,,,1,,,
+,,Valisette MSAVDC (établi),1,,,1,,,
+INTP000114-1,INTP000114,Support isolateur 1 équipé (04-3 740 008),1,,,1,,,
+INTP000115-1,INTP000115,Support isolateur 2 équipé (04-3 740 009),1,,,1,,,
+INTP000113-1,INTP000113,Connexion MSAVDC OUT (04-3 740 012),1,,,1,,,
+INTP000112-1,INTP000112,Connexion MSAVDC IN (04-3 740 011),1,,,1,,,
+MSAVDC-100-1,MSAVDC-100,MSAVDC (04-3 739 966),1,,,1,,,
+INTP000013-1,INTP000013,Isolateur FSH 5-125,1,,,1,,,
+INTC000047-101-1,INTC000047-101,Connexion masse EMFDC (04-3 740 193/101),1,,,1,,,
+INTC000047-102-1,INTC000047-102,Connexion masse EMFDC (04-3 740 193/102),1,,,1,,,
+,,Valisette antenne,1,,,,1,,
+INTP000118-1,INTP000118,Support Antenne (04-3 740 013),1,,,,1,,
+INTC000050-101-1,INTC000050-101,Connexion de masse Antenne (04-3 740 208/101),1,,,,1,,
+443002011-1,,Antenne (04-3 739 965),1,,,,1,,
+INTC000045-101-1,INTC000045-101,Câblot EMFDC Communication (04-3 740 196/101),1,,,,1,,
+INTC000046-101-1,INTC000046-101,Câblot EMFDC Alimentation (04-3 740 197/101),1,,,,1,,
+INTC000043-101-1,INTC000043-101,Câblot EMFAC (04-3 740 195/101),1,,,,1,,
+,,Joint Ø221.84 Ø3.53,1,,,,1,,
+,,Protection bord de tôle (à couper en 2),1,,,,1,,
+,,Valisette renfort toiture,1,,,,,1,
+INTP000109-1,INTP000109,Renfort MSAV25K (0463 740 003),1,,,,,1,
+INTC000053-103-3,INTC000053-103,Tresse de masse (04-3 740 217/103),3,,,,,3,
+INTP000116-1,INTP000116,Renfort MSAVDC (04-3 740 010),1,,,,,1,
+INTP000119-1,INTP000119,Renfort Antenne (04-3 740 189),1,,,,,1,
+,,Valisette DHS,1,,,,,,1
+INTP000117-1,INTP000117,Support Boitier déporté (04-3 740 190),1,,,,,,1
+INTC000048-102-1,INTC000048-102,Connexion de masse support boitier déporté (04-3 740 194/102),1,,,,,,1
+MSAV25K-120-B-1,MSAV25K-120-B,Boitier déporté (04-3 739 968),1,,,,,,1
+INTC000048-101-1,INTC000048-101,connexion de masse Boitier déporté (04-3 740 194/101),1,,,,,,1
+,,Microdisjoncteur 3A-72Vcc  (7 823 9417),1,,,,,,1
+,,Etiquette CC-EMS (L42322043740535),1,,,,,,1
+,,Bornier BNEMS (L42322043740534),1,,,,,,1
+,,Fil S18,1,,,,,,1
+,,Fil 4130,1,,,,,,1
+,,Fil MAS354,1,,,,,,1
+,,Connecteur 6 fils,1,,,,,,1
+,,Câble R18,1,,,,,,1
+,,Câble B-B4131,1,,,,,,1
+INTC000051-101-1,INTC000051-101,Câblot Antenne GPS 04-3 740 198,1,,,,,,1
+INTC000052-101-1,INTC000052-101,Câblot Antenne GSM 04-3 740 199,1,,,,,,1
+,,"Colliers serre-câble 2,5x100 ( 0 193 0273)",50,,,,,,50
+,,"Colliers serre-câble 4,8x350 (7 847 5849)",50,,,,,,50
+C702568-14,C702568,Serre cable 210/76 SE HT-C,14,,14,,,,
+C702568-24,C702568,Serre cable 210/76 SE HT-C,24,,,24,,,

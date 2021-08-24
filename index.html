@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr" translate='no'>
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <!-- Div to show the scanner -->
+    <main>
+        <div id="camera_feed">
+            <div id='camera_pause' class = 'hidden'>
+                Camera à l'arret suite à une inactivité.
+                <button id='camera_restart'>Redémarrer la camera</button>
+            </div>
+        </div>
+        <div id="result_div" class='hidden'>
+            <button class = 'close_button'>X</button>
+            <div id="barcode_result">
+                <p id="result"></p>
+                <p id="description"></p>
+            </div>
+            <div id="barcode_actions">
+            <h2>Répartition : </h2>
+
+            </div>
+
+            <button id="unpause_button"> Nouveau scan </button>
+
+        </div>
+    </main>
+
+    <aside class = 'hidden'>
+        <div id="progressbar">  
+            <h2>Avancement du kitting</h2>
+            <div id = 'progress_switch' class = 'wrapper_radio_selector'>
+                <input type="radio" id="option-1" name ='progress_view' value = 'suitcases' checked>
+                <input type="radio" id="option-2" name ='progress_view' value = 'boxes'>
+                <label for="option-1" class="option option-1">
+                    <span>Valisettes</span>
+                </label>
+                <label for="option-2" class="option option-2">
+                    <span>Caisses</span>
+                </label>
+            </div>
+            <div id="progressbar_viewbox">
+
+                <div id="progressbar_container">
+
+                    <div id="suitcases_progressbar" class = 'progressbar_div'>
+                    </div>
+
+                    <div id="boxes_progressbar" class = 'progressbar_div'>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="progress_detail">
+            <button class = 'close_button'>X</button>
+        </div>
+
+        <button id="reset_button" > Réinitialiser </button>
+
+        <div id='reset_div' class='hidden'>
+            <span>Êtes-vous sûr de vouloir réinitialiser l'avancement du kitting ?</span>
+            <div>
+                <button id="validate_reset"> OUI </button>
+                <button id="abort_reset"> NON </button>
+            </div>
+        </div>
+
+    </aside>
+
+    <button id="info_button" > i </button>
+
+    <button id="search_button" > 
+        <svg class="svg-icon" viewBox="0 0 20 20">
+			<path d="M18.125,15.804l-4.038-4.037c0.675-1.079,1.012-2.308,1.01-3.534C15.089,4.62,12.199,1.75,8.584,1.75C4.815,1.75,1.982,4.726,2,8.286c0.021,3.577,2.908,6.549,6.578,6.549c1.241,0,2.417-0.347,3.44-0.985l4.032,4.026c0.167,0.166,0.43,0.166,0.596,0l1.479-1.478C18.292,16.234,18.292,15.968,18.125,15.804 M8.578,13.99c-3.198,0-5.716-2.593-5.733-5.71c-0.017-3.084,2.438-5.686,5.74-5.686c3.197,0,5.625,2.493,5.64,5.624C14.242,11.548,11.621,13.99,8.578,13.99 M16.349,16.981l-3.637-3.635c0.131-0.11,0.721-0.695,0.876-0.884l3.642,3.639L16.349,16.981z"></path>
+        </svg> 
+    </button>
+
+    <div id='search_bar' class='hidden'>
+        <button class = 'close_button'>X</button>
+        <h2> Recherche manuelle <br/> code-barre</h2>
+        <form action="#" onsubmit="return false">
+            <input type='text'/>
+            <input type='submit' id='search_validate_button' value='VALIDER'>
+        </form>
+    </div>
+
+
+
+    <div id = 'global_progressbar' class = 'progressbar'>
+        <div class = 'progressbar_progress'></div>
+        <span class = 'progressbar_percentage'>0%</span>
+    </div>
+
+    <!-- Include the image-diff library -->
+    <script src="quagga.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
