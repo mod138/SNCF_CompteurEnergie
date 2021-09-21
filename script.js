@@ -48,6 +48,9 @@ const camera_height = 720;
 var camera_timeout;
 const timeout = 300000; //temps d'attente avant mise en pause en ms
 
+const cookie_duration = 24*60*60*1000;
+
+
 function startScanner() {
 
     // Initialisation du module Quagga pour la lecture des codes barres
@@ -88,7 +91,7 @@ function startScanner() {
         }
 
         Quagga.start();
-        
+        window.clearTimeout(camera_timeout);
         camera_timeout = window.setTimeout(function(){pauseCamera()},timeout);       
 
         // Set flag to is running
@@ -101,18 +104,19 @@ function startScanner() {
 
         // Remise a zero du timeout
         window.clearTimeout(camera_timeout);
-        timeoutHandle = window.setTimeout(function(){pauseCamera()},timeout);
+        camera_timeout = window.setTimeout(function(){pauseCamera()},timeout);
 
         var barcode = result.codeResult.code;
 
         handleBarcode(barcode);
                
-        Quagga.pause();
     });
 }
 
 function handleBarcode(barcode, auto = 0){
-    
+
+    Quagga.pause();
+
     result_text.innerHTML = barcode;
     barcode_actions_div.innerHTML = '<h2>Répartition : </h2>';
 
@@ -205,11 +209,11 @@ function validateDistribution() {
         }
     });
 
-    update_progress();
+    updateProgress();
 }
 
 // Fonction pour mettre à jour toutes les infos de progression
-function update_progress(){
+function updateProgress(){
 
     var total = 0;
     var progress = 0;
@@ -254,6 +258,8 @@ function update_progress(){
 
     global_progress.style.width = 100*progress/total + '%';
     global_percent.innerHTML = Math.round(100*progress/total) + '%'
+
+    updateProgressCookie();
 }
 
 // Focntion pour relancer le scan de code barre
@@ -333,6 +339,57 @@ function resumeCamera(){
     camera_pause.classList.add('hidden')
 }
 
+// Fonction cookies
+
+function readCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    
+    // Return null if not found
+    return null;
+}
+
+function loadProgressCookie(){
+
+    const progress_cookie = readCookie('progress');
+    if(progress_cookie){
+        loc_list_progress = JSON.parse(progress_cookie.split(', expire')[0])
+    }
+
+}
+
+function updateProgressCookie(){
+
+    const progress_cookie = readCookie('progress');
+
+    if(!progress_cookie){
+
+        const d=new Date();
+        d.setTime(d.getTime() + cookie_duration);
+        expiration_date = d.toGMTString();
+        
+    }else{
+        expiration_date = unescape(progress_cookie).split('expire')[1];
+    }
+
+    const json_progress = JSON.stringify(loc_list_progress);
+
+    document.cookie = `progress = ${json_progress}, expire ${expiration_date}`;
+}
+
+
 // Event listeners pour les bouttons
 
 new_scan_button.addEventListener("click", function () {
@@ -390,7 +447,9 @@ validate_reset_button.addEventListener("click", function () {
         el.style.color = null;
     });
 
-    update_progress();
+    updateProgressCookie();
+
+    updateProgress();
     reset_div.classList.add('hidden');
     
 }, false);
@@ -665,9 +724,14 @@ loc_list_progress = new Object;
 bag_list = new Object;
 part_list = new Object;
 
+
 Promise.all( [getCSVCases,getCSVBoxes]).then( () => {
     startApp();
+    loadProgressCookie();
+    updateProgress();
+
 })
+
 
 
 // TODO : 
