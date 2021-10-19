@@ -23,8 +23,11 @@ const description_div = document.getElementById("description");
 const search_bar = document.getElementById("search_bar");
 const search_input = search_bar.getElementsByTagName('input')[0];
 
+const info_popup = document.getElementById("info_popup");
+
 const new_scan_button = document.getElementById("unpause_button");
 const info_button = document.getElementById("info_button");
+const camera_switch_button = document.getElementById("camera_switch_button");
 const search_button = document.getElementById("search_button");
 const search_validate_button = document.getElementById('search_validate_button');
 
@@ -51,7 +54,7 @@ const timeout = 300000; //temps d'attente avant mise en pause en ms
 const cookie_duration = 24*60*60*1000;
 
 
-function startScanner() {
+function startScanner(camera_id = 1) {
 
     // Initialisation du module Quagga pour la lecture des codes barres
     Quagga.init({
@@ -62,7 +65,7 @@ function startScanner() {
             constraints: {
                 width: camera_width ,
                 height: camera_height,
-                facingMode: "environment",
+                deviceId: camera.id(),
             },
         },
         decoder: {
@@ -334,8 +337,8 @@ function pauseCamera(){
     camera_pause.classList.remove('hidden')
 }
 
-function resumeCamera(){
-    startScanner();
+function resumeCamera(camera_id=1){
+    startScanner(camera_id);
     camera_pause.classList.add('hidden')
 }
 
@@ -556,9 +559,9 @@ function csvToObject(csv, object){
 
 
 // Fonction d'initialisation et de lancement de l'application
-function startApp(){
+function startApp(camera_index=1){
 
-    startScanner();
+    startScanner(camera_index);
 
 
     /////////////////////////////////////
@@ -712,7 +715,23 @@ function startApp(){
 
 }
 
+function switchCamera(){
+    pauseCamera();
+    camera.next();
+    info_popup.classList.add('visible');
+    info_popup.innerHTML = camera.name();
+    setTimeout(()=>{info_popup.classList.remove('visible')},2000);
+    resumeCamera();
 
+}
+
+function addCameraButton(){
+    camera_switch_button.classList.remove('hidden')
+    camera_switch_button.addEventListener("click", function () {
+        switchCamera();   
+    }, false);
+    
+}
 
 barcode_type = new Object;
 barcode_list = new Object;
@@ -725,14 +744,53 @@ bag_list = new Object;
 part_list = new Object;
 
 
-Promise.all( [getCSVCases,getCSVBoxes]).then( () => {
-    startApp();
-    loadProgressCookie();
-    updateProgress();
+var camera = {
+    index : 0,
+    list : [],
+    next : function(){
+        this.index++;
+        if(this.index>=this.list.length){
+           this.index = 0;
+        }
+    },
+    id : function(){
+        return this.list[this.index]['id']
+    },
+    name : function(){
+        return this.list[this.index]['name']
+    },
+    add : function(C){
+        this.list.push(C);
+    }
 
-})
+};
+
+navigator.mediaDevices.enumerateDevices()
+    .then(function(devices) {
+        devices.forEach(function(device) {  
+            if( device.kind === "videoinput"){
+                camera.add({id : device.deviceId, name : device.label});
+            } 
+        });
+        if(camera.list.length==0){
+            throw new Error('Pas de caméra détectée')
+        }else if(camera.list.length>1){
+            addCameraButton();
+        }
+    })
+    .catch(function(err) {  
+        alert(err);
+    })
+    .then(() =>{
+        Promise.all( [getCSVCases,getCSVBoxes])
+            .then( () => {
+                startApp();
+                loadProgressCookie();
+                updateProgress();
+         })
+    });
 
 
 
 // TODO : 
-// Piece sans code barre
+// bouton switch camera

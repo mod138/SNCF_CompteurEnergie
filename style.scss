@@ -338,6 +338,25 @@ body{
 
   }
 
+  #info_popup{
+    position : absolute;
+    top : 70px;
+    left : 50%;
+    clip-path: inset(50% 0% 50% 0%); 
+    transition : clip-path 0.1s;
+    transform: translateX(-50%);
+    max-width : 70%;
+    border-radius : 10px;
+    background: rgba(179, 177, 177, 0.306);
+    padding: 10px 20px 10px 20px;
+    color : white;
+
+    &.visible{
+      clip-path: inset(0% 0% 0% 0%); 
+    }
+
+  }
+
   #info_button{
     border-radius: 0 0% 0 10px;
     position : absolute;
@@ -360,6 +379,35 @@ body{
 
     &.open{
       background : rgba(223, 10, 10, 0.849);
+    }
+
+  }
+
+  #camera_switch_button{
+    border-radius: 0px 0 10px 10px;
+    position : absolute;
+    left : 50%;
+    transform: translateX(-50%);
+    top : 0px;
+    // margin : 10px;
+    padding : 0;
+    width : 50px;
+    height : 50px;
+    z-index: 9;
+    box-shadow: 5px 5px 30px rgba(0,0,0,0.65);
+    background : #d95000;
+    
+    border : none;
+
+    text-align: center;
+
+    font-size: 125%;
+    color : white;
+
+    svg{
+      width :30px;
+      stroke : white;
+      fill : white;
     }
 
   }
