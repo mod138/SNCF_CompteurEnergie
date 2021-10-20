@@ -54,8 +54,7 @@ const timeout = 300000; //temps d'attente avant mise en pause en ms
 const cookie_duration = 24*60*60*1000;
 
 
-function startScanner(camera_id = 1) {
-
+function startScanner() {
     // Initialisation du module Quagga pour la lecture des codes barres
     Quagga.init({
         inputStream: {
@@ -333,12 +332,13 @@ function openInfoArea(){
 // Fonction de pause de la camera
 function pauseCamera(){
     Quagga.stop();
+    Quagga.CameraAccess.release()
     _scannerIsRunning = false;
     camera_pause.classList.remove('hidden')
 }
 
-function resumeCamera(camera_id=1){
-    startScanner(camera_id);
+function resumeCamera(){
+    startScanner();
     camera_pause.classList.add('hidden')
 }
 
@@ -559,9 +559,9 @@ function csvToObject(csv, object){
 
 
 // Fonction d'initialisation et de lancement de l'application
-function startApp(camera_index=1){
+function startApp(){
 
-    startScanner(camera_index);
+    startScanner();
 
 
     /////////////////////////////////////
@@ -715,12 +715,15 @@ function startApp(camera_index=1){
 
 }
 
+
+let info_popup_timout;
 function switchCamera(){
     pauseCamera();
     camera.next();
     info_popup.classList.add('visible');
     info_popup.innerHTML = camera.name();
-    setTimeout(()=>{info_popup.classList.remove('visible')},2000);
+    clearTimeout(info_popup_timout);
+    info_popup_timout = setTimeout(()=>{info_popup.classList.remove('visible')},2000);
     resumeCamera();
 
 }
@@ -759,36 +762,47 @@ var camera = {
     name : function(){
         return this.list[this.index]['name']
     },
-    add : function(C){
+    push : function(C){
         this.list.push(C);
     }
 
 };
 
-navigator.mediaDevices.enumerateDevices()
-    .then(function(devices) {
-        devices.forEach(function(device) {  
-            if( device.kind === "videoinput"){
-                camera.add({id : device.deviceId, name : device.label});
-            } 
-        });
-        if(camera.list.length==0){
-            throw new Error('Pas de caméra détectée')
-        }else if(camera.list.length>1){
-            addCameraButton();
-        }
+
+
+navigator.mediaDevices.getUserMedia({audio : false, video: {facingMode : 'environment', width : camera_width, height : camera_height}})
+    .then(()=>{
+        navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+                devices.forEach(function(device) {  
+                    if( device.kind === "videoinput"){
+                        if ( device.label.includes('back') || device.label.includes('arrière')){
+                            camera.list.unshift({id : device.deviceId, name : device.label});
+                        }else{
+                            camera.list.push({id : device.deviceId, name : device.label});
+                        }
+                    } 
+                });
+                if(camera.list.length==0){
+                    throw new Error('Pas de caméra détectée')
+                }else if(camera.list.length>0){
+                    addCameraButton();
+                }
+            })
+            .catch(function(err) {  
+                alert(err);
+            })
+            .then(() =>{
+                Promise.all( [getCSVCases,getCSVBoxes])
+                    .then( () => {
+                        startApp();
+                        loadProgressCookie();
+                        updateProgress();
+                })
+            });
     })
-    .catch(function(err) {  
-        alert(err);
-    })
-    .then(() =>{
-        Promise.all( [getCSVCases,getCSVBoxes])
-            .then( () => {
-                startApp();
-                loadProgressCookie();
-                updateProgress();
-         })
-    });
+    
+
 
 
 
