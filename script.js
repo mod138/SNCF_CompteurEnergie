@@ -51,7 +51,7 @@ const camera_height = 720;
 var camera_timeout;
 const timeout = 300000; //temps d'attente avant mise en pause en ms
 
-const cookie_duration = 24*60*60*1000;
+const cookie_duration = 96*60*60*1000;
 
 
 function startScanner() {
@@ -368,28 +368,20 @@ function loadProgressCookie(){
 
     const progress_cookie = readCookie('progress');
     if(progress_cookie){
-        loc_list_progress = JSON.parse(progress_cookie.split(', expire')[0])
+        loc_list_progress = JSON.parse(progress_cookie)
     }
 
 }
 
 function updateProgressCookie(){
 
-    const progress_cookie = readCookie('progress');
-
-    if(!progress_cookie){
-
-        const d=new Date();
-        d.setTime(d.getTime() + cookie_duration);
-        expiration_date = d.toGMTString();
-        
-    }else{
-        expiration_date = unescape(progress_cookie).split('expire')[1];
-    }
+    const d=new Date();
+    d.setTime(d.getTime() + cookie_duration);
+    expiration_date = d.toGMTString();
 
     const json_progress = JSON.stringify(loc_list_progress);
 
-    document.cookie = `progress = ${json_progress}, expire ${expiration_date}`;
+    document.cookie = `progress = ${json_progress}; expires=${expiration_date}`;
 }
 
 
@@ -785,7 +777,7 @@ navigator.mediaDevices.getUserMedia({audio : false, video: {facingMode : 'enviro
                 });
                 if(camera.list.length==0){
                     throw new Error('Pas de caméra détectée')
-                }else if(camera.list.length>0){
+                }else if(camera.list.length>1){
                     addCameraButton();
                 }
             })
