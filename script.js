@@ -44,6 +44,8 @@ const progress_switch_radios = document.querySelectorAll('input[name="progress_v
 
 const global_progress = document.querySelector('#global_progressbar .progressbar_progress');
 const global_percent = document.querySelector('#global_progressbar .progressbar_percentage');
+var location_completed = [];
+var location_error = [];
 
 const camera_width = 720;
 const camera_height = 720;
@@ -117,12 +119,13 @@ function startScanner() {
 
 function handleBarcode(barcode, auto = 0){
 
-    Quagga.pause();
 
     result_text.innerHTML = barcode;
     barcode_actions_div.innerHTML = '<h2>Répartition : </h2>';
 
     closeInfoArea();
+    
+    Quagga.pause();
 
     var element, type;
 
@@ -220,31 +223,57 @@ function updateProgress(){
     var total = 0;
     var progress = 0;
 
+    let new_location_completed = [];
+    let new_location_error = [];
+
     for(bc_type in barcode_type){
         const container = barcode_type[bc_type]
 
-        for (const location in loc_list[container]){
+        for (const location in loc_list_progress[container]){
             var qty = 0;
             var qty_progress = 0;
 
             const progress_span = document.querySelector('span[data-id ="progress_'+ location + '"]');
             const progress_bar = document.querySelector('progress[data-id ="progress_bar_'+ location + '"]');
 
+            let completed = 0;
+            let error = 0;
+
             for(element in loc_list_progress[container][location]){
 
                 qty_progress += Math.min(loc_list_progress[container][location][element],loc_list[container][location][element]);
                 qty += loc_list_progress[container][location][element];
 
-                if(loc_list_progress[container][location][element] == loc_list[container][location][element]){
+                if(loc_list_progress[container][location][element] >= loc_list[container][location][element]){
                     document.querySelector('div[data-id = "progress_detail_' + location + '_' + element + '"]').classList.add('full');
-                }else if(loc_list_progress[container][location][element] >= loc_list[container][location][element]){
-                    document.querySelector('div[data-id = "progress_detail_' + location + '_' + element + '"]').classList.add('error');
-                    document.querySelector('.progress_line[data-container="'+ location + '"]').style.color = 'red';
+                    completed += 1;
+
+                    if(loc_list_progress[container][location][element] > loc_list[container][location][element]){
+                        document.querySelector('div[data-id = "progress_detail_' + location + '_' + element + '"]').classList.add('error');
+                        error += 1;
+                    }
 
                 }
 
                 document.querySelector('div[data-id = "progress_detail_' + location + '_' + element + '"] span').innerHTML = loc_list_progress[container][location][element];
+                          
 
+            }
+
+            if(completed == Object.keys(loc_list[container][location]).length-1){
+                if(!location_completed.includes(location)){
+                    location_completed.push(location);
+                    new_location_completed.push(location);
+                }
+                document.querySelector('.progress_line[data-container="'+ location + '"]').style.color = 'green';
+            }
+
+            if(error){
+                if(!location_error.includes(location)){
+                    location_error.push(location);
+                    new_location_error.push(location);
+                }
+                document.querySelector('.progress_line[data-container="'+ location + '"]').style.color = 'red';
             }
 
             progress += qty_progress;
@@ -257,6 +286,22 @@ function updateProgress(){
 
     }
    
+
+    let str = '';
+    if(new_location_completed.length > 0){
+        str += 'Finis : ' + new_location_completed.join(' , ')
+    };
+    if(new_location_error.length > 0){
+        if(str!=''){
+            str+='<br/>'
+        }
+        str += 'Erreurs : ' + new_location_error.join(' , ')
+    }
+    if(str!=''){
+        infoPopupPrint(str);
+    }
+    
+
 
     global_progress.style.width = 100*progress/total + '%';
     global_percent.innerHTML = Math.round(100*progress/total) + '%'
@@ -302,10 +347,6 @@ function showDetail() {
 // Fonction de gestion de l'ouverture de la zone d'information
 function closeInfoArea(){
 
-    if(_scannerIsRunning){
-        Quagga.start();
-    }
-
     info_button.innerHTML = 'i'
     info_canvas.classList.add('hidden');
     progress_detail_div.classList.add('hidden');
@@ -315,7 +356,6 @@ function closeInfoArea(){
 
 function openInfoArea(){
 
-    Quagga.pause();
     info_button.innerHTML = 'X';
     for(bc_type in barcode_type){
         const container = barcode_type[bc_type]
@@ -399,7 +439,13 @@ info_button.addEventListener("click", function () {
 
     if(info_button.classList.contains('open')){
         closeInfoArea();
+
+        if(_scannerIsRunning){
+            Quagga.start();
+        }
+    
     }else{
+        Quagga.pause();
         openInfoArea();
     }
 
@@ -409,6 +455,7 @@ info_button.addEventListener("click", function () {
 
 search_button.addEventListener("click", function(){
     search_bar.classList.remove('hidden');
+    Quagga.pause();
     search_input.focus();
 }, false)
 
@@ -433,6 +480,9 @@ validate_reset_button.addEventListener("click", function () {
         }
     }
 
+    location_completed = [];
+    location_error = [];
+
     Array.prototype.forEach.call(document.querySelectorAll('.progress_line'), function(el){
         el.style.color = null;
     });
@@ -453,9 +503,13 @@ abort_reset_button.addEventListener("click", function () {
     reset_div.classList.add('hidden');
 }, false);
 
-
 close_buttons.forEach((button) => {
-    button.addEventListener('click', function(){
+    button.addEventListener('click', function(e){
+        if(button.classList.contains('scanner_restart')){
+            if(_scannerIsRunning){
+                Quagga.start();
+            }        
+        }
         this.parentNode.classList.add('hidden');
         }, false)
     }
@@ -704,18 +758,22 @@ function startApp(){
     }
 
     }
-
 }
 
 
 let info_popup_timout;
+
+function infoPopupPrint(msg){
+    info_popup.innerHTML = msg;
+    info_popup.classList.add('visible');
+    clearTimeout(info_popup_timout);
+    info_popup_timout = setTimeout(()=>{info_popup.classList.remove('visible')},2000);
+}
+
 function switchCamera(){
     pauseCamera();
     camera.next();
-    info_popup.classList.add('visible');
-    info_popup.innerHTML = camera.name();
-    clearTimeout(info_popup_timout);
-    info_popup_timout = setTimeout(()=>{info_popup.classList.remove('visible')},2000);
+    infoPopupPrint(camera.name());
     resumeCamera();
 
 }
@@ -796,7 +854,3 @@ navigator.mediaDevices.getUserMedia({audio : false, video: {facingMode : 'enviro
     
 
 
-
-
-// TODO : 
-// bouton switch camera
